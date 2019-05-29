@@ -114,6 +114,7 @@ def gload(file):
     v=[]
     fa=[]
     vt=[]
+    vn=[]
     vertexBufferArray=[]
     with open(file) as f:
         for line in f:
@@ -136,23 +137,34 @@ def gload(file):
                         conv.append(int(j)-1)
                     conv2.append(conv)
                 fa.append(conv2)
+            if line.startswith('vn'):
+                conv4=[]
+                for i in line.split(' ')[1:]:
+                    conv4.append(float(i))
+                vn.append(conv4)
+
     for faces in fa:
         for face in faces:
             index=face[0]
             index2=face[1]
+            index3=face[2]
             vertex = transform(v[index])
             vertexBufferArray.append(vertex)
             vertexBufferArray.append(vt[index2])
+            vertexBufferArray.append(vn[index3])
     vertexBuffer = iter(vertexBufferArray)
 def gltrianglewire():
     global monitor
 
     a = next(vertexBuffer)
     ta = next(vertexBuffer)
+    na = next(vertexBuffer)
     b = next(vertexBuffer)
     tb=next(vertexBuffer)
+    nb=next(vertexBuffer)
     c = next(vertexBuffer)
     tc=next(vertexBuffer)
+    nc=next(vertexBuffer)
     #a= transform(a,(0,0,0),(1,1,1))
     #b=transform(b,(0,0,0),(1,1,1))
     #c=transform(c,(0,0,0),(1,1,1))
@@ -182,9 +194,9 @@ def gltrianglewire():
                 tx=ta[0]*val1+tb[0]*val2+tc[0]*val3
                 ty=ta[1]*val1+tb[1]*val2+tc[1]*val3
                 r,g,tercer=activeTexture.getColor(tx,ty)
-                r = min(1, r * intensity)
-                g = min(1, g * intensity)
-                tercer = min(1, tercer * intensity)
+                r,g,tercer = shader(
+                    na,nb,nc,r,g,tercer,light,val1,val2,val3
+                )
                 glColor(r, g, tercer)
                 z=a[2]*val1+b[2]*val2+c[2]*val3
                 if (0 < x < 2000 and 0 < y < 2000 and monitor.zbuffer[x][y]<z):
@@ -192,6 +204,30 @@ def gltrianglewire():
                     monitor.point(x,y)
                     monitor.zbuffer[x][y]=z
 
+def shader(na,nb,nc,r,g,tercer,light,val1,val2,val3):
+    print(na)
+    nx = na[0] * val1 + nb[0] * val2 + nc[0] * val3
+    ny = na[1] * val1 + nb[1] * val2 + nc[1] * val3
+    nz = na[2] * val1 + nb[2] * val2 + nc[2] * val3
+    normal = [nx,ny,nz]
+    normal = normalize(normal)
+    intensity=dot(normal,light)
+    r = max(min(r*intensity,1),0)
+    g = max(min(g*intensity,1),0)
+    b = max(min(tercer*intensity,1),0)
+    return r,g,b
+def shaderGreen(na,nb,nc,r,g,tercer,light,val1,val2,val3):
+    print(na)
+    nx = na[0] * val1 + nb[0] * val2 + nc[0] * val3
+    ny = na[1] * val1 + nb[1] * val2 + nc[1] * val3
+    nz = na[2] * val1 + nb[2] * val2 + nc[2] * val3
+    normal = [nx,ny,nz]
+    normal = normalize(normal)
+    intensity=dot(normal,light)
+    if 0<intensity<1:
+        return r*intensity,g*intensity,tercer*intensity
+    else:
+        return 0,0.5,0
 def vectormat(mat,vec):
     newMat=[
         mat[0][0]*vec[0]+mat[0][1]*vec[1]+mat[0][2]*vec[2]+mat[0][3]*vec[3],
