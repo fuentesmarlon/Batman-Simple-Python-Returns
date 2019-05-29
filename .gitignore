@@ -1,0 +1,7 @@
+*.obj
+*.mtl
+*.pyc
+__pycache__
+venv
+.idea
+*.bmp
