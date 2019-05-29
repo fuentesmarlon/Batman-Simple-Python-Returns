@@ -238,9 +238,14 @@ def transform(vertex):
         0,1,0,0,
         0,0,1,-0.00069,
         0,0,0,1)
+    viewport = glm.mat4(
+        1,0,0,0,
+        0,1,0,0,
+        0,0,1,0,
+        1000,1000,1000,1)
 
     vertex = glm.vec4(vertex,1)
-    vertex =proyeccion*view*model*vertex
+    vertex =viewport*proyeccion*view*model*vertex
     vertex = glm.vec3(
         vertex/vertex.w
     )
