@@ -233,9 +233,19 @@ def transform(vertex):
     i = glm.mat4(1)
     model = glm.translate(i,glm.vec3(300,0,0))*glm.rotate(i,glm.radians(90),glm.vec3(0,1,0)) *glm.scale(i,glm.vec3(100,100,100))
     view = glm.lookAt(glm.vec3(0,500,500),glm.vec3(0,0,0),glm.vec3(0,1,0))
+    proyeccion = glm.mat4(
+        1,0,0,0,
+        0,1,0,0,
+        0,0,1,-0.00069,
+        0,0,0,1)
+
     vertex = glm.vec4(vertex,1)
-    vertex =view*model*vertex
+    vertex =proyeccion*view*model*vertex
+    vertex = glm.vec3(
+        vertex/vertex.w
+    )
     return vertex
+
 
 def gldraw(tipo):
     if tipo =='wireframe':
