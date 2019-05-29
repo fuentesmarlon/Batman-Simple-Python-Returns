@@ -232,10 +232,9 @@ def transform(vertex):
     vertex=glm.vec3(*vertex)
     i = glm.mat4(1)
     model = glm.translate(i,glm.vec3(300,0,0))*glm.rotate(i,glm.radians(90),glm.vec3(0,1,0)) *glm.scale(i,glm.vec3(100,100,100))
+    view = glm.lookAt(glm.vec3(0,500,500),glm.vec3(0,0,0),glm.vec3(0,1,0))
     vertex = glm.vec4(vertex,1)
-    vertex =model*vertex
-
-    print("vertex", vertex)
+    vertex =view*model*vertex
     return vertex
 
 def gldraw(tipo):
