@@ -237,6 +237,6 @@ glClear()
 
 gload(file='batman2.obj')
 gldraw(tipo='wireframe')
-name="linea.bmp"
+name="medium_shot.bmp"
 glFinish(name)
 

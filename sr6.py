@@ -192,8 +192,12 @@ def gltrianglewire():
                 pass
             else:
                 tx=ta[0]*val1+tb[0]*val2+tc[0]*val3
-                ty=ta[1]*val1+tb[1]*val2+tc[1]*val3
-                r,g,tercer=activeTexture.getColor(tx,ty)
+                ty = ta[1] * val1 + tb[1] * val2 + tc[1] * val3
+                r, g, tercer = activeTexture.getColor(tx, ty)
+                #r = min(1, r * intensity)
+                #g = min(1, g * intensity)
+                #tercer = min(1, tercer * intensity)
+                #glColor(r, g, tercer)
                 r,g,tercer = shader(
                     na,nb,nc,r,g,tercer,light,val1,val2,val3
                 )
@@ -205,13 +209,14 @@ def gltrianglewire():
                     monitor.zbuffer[x][y]=z
 
 def shader(na,nb,nc,r,g,tercer,light,val1,val2,val3):
-    print(na)
+
     nx = na[0] * val1 + nb[0] * val2 + nc[0] * val3
     ny = na[1] * val1 + nb[1] * val2 + nc[1] * val3
     nz = na[2] * val1 + nb[2] * val2 + nc[2] * val3
     normal = [nx,ny,nz]
     normal = normalize(normal)
     intensity=dot(normal,light)
+    intensity=intensity*-1
     r = max(min(r*intensity,1),0)
     g = max(min(g*intensity,1),0)
     b = max(min(tercer*intensity,1),0)
@@ -267,8 +272,9 @@ def transform(vertex,translate=(0,0,0),scale=(1,1,1),rotate=(0,0,0)):
 def transform(vertex):
     vertex=glm.vec3(*vertex)
     i = glm.mat4(1)
-    model = glm.translate(i,glm.vec3(300,0,0))*glm.rotate(i,glm.radians(90),glm.vec3(0,1,0)) *glm.scale(i,glm.vec3(100,100,100))
-    view = glm.lookAt(glm.vec3(0,500,500),glm.vec3(0,0,0),glm.vec3(0,1,0))
+    model = glm.translate(i,glm.vec3(0,-1300,500))*glm.rotate(i,glm.radians(0),glm.vec3(0,0,1)) *glm.scale(i,glm.vec3(200,200,200))
+
+    view = glm.lookAt(glm.vec3(0,0,200),glm.vec3(0,0,0),glm.vec3(0,1,0))
     proyeccion = glm.mat4(
         1,0,0,0,
         0,1,0,0,
@@ -440,7 +446,7 @@ texture='texture.bmp'
 glInit()
 glCreateWindow(2000,2000,texture=texture)
 glViewPort(0,0,2000,2000)
-glClearColor(0,0,0)
+glClearColor(1,1,1)
 glColor(1,1,1)
 glClear()
 
